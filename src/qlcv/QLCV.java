@@ -7,6 +7,9 @@ package qlcv;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
@@ -14,64 +17,57 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import model.User;
 
 /**
  *
  * @author tmtrd
  */
-public class QLCV extends JApplet {
+public class QLCV extends Application {
     
-    private static final int JFXPANEL_WIDTH_INT = 300;
-    private static final int JFXPANEL_HEIGHT_INT = 250;
-    private static JFXPanel fxContainer;
+    private Stage stage;
+    private User loggedUser;
+    private final double MINIMUM_WINDOW_WIDTH = 390.0;
+    private final double MINIMUM_WINDOW_HEIGHT = 500.0;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
-                try {
-                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-                } catch (Exception e) {
-                }
-                
-                JFrame frame = new JFrame("JavaFX 2 in Swing");
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                
-                JApplet applet = new QLCV();
-                applet.init();
-                
-                frame.setContentPane(applet.getContentPane());
-                
-                frame.pack();
-                frame.setLocationRelativeTo(null);
-                frame.setVisible(true);
-                
-                applet.start();
-            }
-        });
+        Application.launch(QLCV.class, (java.lang.String[])null);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        try {
+            stage = primaryStage;
+            stage.setTitle("Đăng nhập");
+            stage.setMinWidth(MINIMUM_WINDOW_WIDTH);
+            stage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
+            gotoLogin();
+            primaryStage.show();
+        } catch (Exception ex) {
+            Logger.getLogger(QLCV.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
-    @Override
-    public void init() {
-        fxContainer = new JFXPanel();
-        fxContainer.setPreferredSize(new Dimension(JFXPANEL_WIDTH_INT, JFXPANEL_HEIGHT_INT));
-        add(fxContainer, BorderLayout.CENTER);
-        // create JavaFX scene
-        Platform.runLater(new Runnable() {
-            
-            @Override
-            public void run() {
-                createScene();
-            }
-        });
+    public User getLoggedUser() {
+        return loggedUser;
+    }
+    
+    public boolean userLogging(String userId, String password){
+        if (Authenticator.validate(userId, password)) {
+            loggedUser = User.of(userId);
+            gotoProfile();
+            return true;
+        } else {
+            return false;
+        }
     }
     
     private void createScene() {
