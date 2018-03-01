@@ -23,6 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import model.User;
+import security.Authenticator;
 
 /**
  *
@@ -70,19 +71,28 @@ public class QLCV extends Application {
         }
     }
     
-    private void createScene() {
-        Button btn = new Button();
-        btn.setText("Say 'Hello World'");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-            
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Hello World!");
-            }
-        });
-        StackPane root = new StackPane();
-        root.getChildren().add(btn);
-        fxContainer.setScene(new Scene(root));
+    private void gotoLogin() {
+        try {
+            LoginController login = (LoginController) replaceSceneContent("login.fxml");
+            login.setApp(this);
+        } catch (Exception ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
+    
+//    private void createScene() {
+//        Button btn = new Button();
+//        btn.setText("Say 'Hello World'");
+//        btn.setOnAction(new EventHandler<ActionEvent>() {
+//            
+//            @Override
+//            public void handle(ActionEvent event) {
+//                System.out.println("Hello World!");
+//            }
+//        });
+//        StackPane root = new StackPane();
+//        root.getChildren().add(btn);
+//        fxContainer.setScene(new Scene(root));
+//    }
     
 }
